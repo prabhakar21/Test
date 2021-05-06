@@ -1,0 +1,67 @@
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class Example1 {
+
+	public static void main(String[] args) throws InterruptedException,IOException {
+	     System.setProperty("webdriver.chrome.driver", "C:\\JAVA\\chromedriver.exe");  
+     
+	      WebDriver driver=new ChromeDriver(); 
+
+	      driver.navigate().to("http://www.flipkart.com/");  
+
+	        driver.manage().window().maximize();  
+	        
+	        driver.manage().timeouts().implicitlyWait(20,TimeUnit.SECONDS);
+	        driver.findElement(By.xpath("//button[@class='_2KpZ6l _2doB4z']")).click(); 
+	      driver.findElement(By.xpath("//input[@title= 'Search for products, brands and more']")).sendKeys("Mobile iphone 40000"); 
+	      driver.findElement(By.xpath("//button[@class='L0Z3Pu']")).submit(); 
+	      driver.findElement(By.xpath("//div[contains(text(),'Price -- Low to High')]")).click(); 
+	      Thread.sleep(10000);
+	      List<WebElement> name = driver.findElements(By.xpath("//div[@class='_1AtVbE col-12-12']//div[@class='_4rR01T']"));
+	      List<WebElement> price = driver.findElements(By.xpath("//div[@class='_1AtVbE col-12-12']//div[@class='_30jeq3 _1_WHN1']"));
+//	      Iterator itr = str.iterator();
+//	      while(itr.hasNext()) {
+//	    	  String name = driver.findElement(By.xpath("itr")).getText();
+//	         System.out.println(name);
+//	      }
+	     String[] names = new String[100];
+	     String[] prices = new String[100];
+	      for (int i=0; i<name.size();i++){
+	          System.out.println(name.get(i).getText());
+	          System.out.println(price.get(i).getText());
+	          names[i] = name.get(i).getText();
+	          prices[i] = price.get(i).getText().replaceAll("[₹,]","");
+	          }
+          try (OutputStream fileStream = new BufferedOutputStream(new FileOutputStream("E:\\eclipse\\Output\\Data.csv"));
+	                Writer outStreamWriter = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8);
+	                BufferedWriter buffWriter = new BufferedWriter(outStreamWriter)) {
+	          
+        	  for (int i=0; i<names.length;i++) {
+        		  buffWriter.append(names[i]);
+        		  buffWriter.append("\n");
+        		  buffWriter.append(prices[i]);
+        		  buffWriter.append("\n");
+        		}
+        	  
+        
+	            buffWriter.flush();
+      
+	      }
+
+	}
+
+}
